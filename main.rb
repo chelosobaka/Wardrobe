@@ -1,8 +1,13 @@
-require_relative 'lib/thing.rb'
-require_relative 'lib/wardrobe.rb'
-require_relative 'lib/helper.rb'
+require_relative 'lib/thing'
+require_relative 'lib/wardrobe'
 
-Helper.encoding
+if Gem.win_platform?
+  Encoding.default_external = Encoding.find(Encoding.locale_charmap)
+  Encoding.default_internal = __ENCODING__
+  [STDIN, STDOUT].each do |io|
+    io.set_encoding(Encoding.default_external, Encoding.default_internal)
+  end
+end
 
 loop do
   puts ("1 - Добавить вещь")
@@ -10,7 +15,7 @@ loop do
   choise = STDIN.gets.to_i
   case choise
   when 1
-    Helper.add_thing
+    Thing.add_thing
     next
   when 2
     break
@@ -20,7 +25,7 @@ loop do
 end
 
 puts "Сколько градусов за окном? (можно с минусом)"
-things = Helper.create_things_object
+things = Thing.create_things_object
 temperature = STDIN.gets.to_i
 
 puts "Предлагаем сегодня надеть:"
@@ -28,7 +33,7 @@ puts
 wardrobe = Wardrobe.new(things, temperature)
 wardrobe.what_to_wear.each do |x|
   if x != nil
-    puts x.printer
+    puts x.to_s
   end
 end
 
